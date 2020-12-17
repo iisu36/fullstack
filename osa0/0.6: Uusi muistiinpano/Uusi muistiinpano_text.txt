@@ -1,0 +1,18 @@
+note over selain:
+selain suorittaa tapahtumankäsittelijän
+joka luo uuden muistiinpanon, lisää sen
+muistiinpanojen listalle, renderöi listan
+uudelleen näytölle ja lähettää muistiinpanon
+palvelimelle POST-pyynnöllä
+end note
+
+selain->palvelin: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+note over palvelin:
+palvelin saa POST-pyynnön ruongon mukana 
+uuteen muistiinpanon liittyvän datan
+ja luo sen pohjalta uuden muistiinpano-olion 
+ja laittaa sen muistiinpano-taulukkoon
+end note
+
+palvelin-->selain: HTTP status 201
