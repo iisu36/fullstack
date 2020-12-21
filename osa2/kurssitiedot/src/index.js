@@ -21,7 +21,7 @@ const Content = ({parts}) => {
   return (
     <div>
       {parts.map(part => 
-        <Part part={part} />  
+        <Part part={part} key={part.id} />  
       )}
     </div>
   )
@@ -122,7 +122,7 @@ const App = () => {
     <div>
       
       {courses.map(course => 
-        <Course course={course} />  
+        <Course course={course} key={course.id} />  
       )}
 
     </div>
