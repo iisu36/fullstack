@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Countries from './countries'
 
 import axios from 'axios'
 
@@ -6,7 +7,6 @@ const App = () => {
 
   const [data, setData] = useState([])
   const [filter, setFilter] = useState('')
-  let countries
 
   useEffect(() => {
     axios
@@ -18,14 +18,6 @@ const App = () => {
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
-    listCountries()
-  }
-
-  const listCountries = () => {
-
-    countries = data.filter((country) => country.name.toLowerCase().includes(filter.toLowerCase()))
-
-    console.log(countries)
   }
 
   return (
@@ -35,8 +27,7 @@ const App = () => {
         find countries <input value={filter} onChange={handleFilterChange} />
       </div>
 
-      <div>
-      </div>
+      <Countries filter={filter} setFilter={setFilter} countries={data.filter(country => country.name.toLowerCase().includes(filter.toLowerCase()))} />
 
     </div>
   )
