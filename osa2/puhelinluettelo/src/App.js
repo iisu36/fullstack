@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import Filter from './filter'
-import PersonForm from './personForm'
-import Persons from './persons'
-
-import axios from 'axios'
+import Filter from './components/filter'
+import PersonForm from './components/personForm'
+import Persons from './components/persons'
+import phoneService from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,10 +11,13 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/db')
-      .then(response => {
-        setPersons(response.data.persons)
+    phoneService
+      .getAll()
+      .then(data => {
+        setPersons(data)
+      })
+      .catch(error => {
+        alert(error)
       })
   }, [])
 
@@ -34,23 +36,50 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
 
+    const personObject = {
+      name: newName,
+      number: newNumber
+    }
+
+    let id = 0
+
     if (!persons.some(person => {
+
+      id = person.id
+
       return person.name === newName
     })) {
 
-      const personObject = {
-        name: newName,
-        number: newNumber
-      }
+      phoneService
+        .create(personObject)
+        .then(data => {
+          setPersons(persons.concat(data))
+        })
+        .catch(error => {
+          alert(error)
+        })
 
-      setPersons(persons.concat(personObject))
     } else {
 
-      alert(`${newName} is already added to phonebook`)
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+
+        replace(personObject, id)
+      }
     }
 
     setNewName('')
     setNewNumber('')
+  }
+
+  const replace = (personObject, id) => {
+
+    phoneService.replace(id, personObject)
+      .then(returnedPerson =>
+        setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+      )
+      .catch(error => {
+        alert(error)
+      })
   }
 
   return (
@@ -60,13 +89,13 @@ const App = () => {
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
 
       <h2>add a new</h2>
-      
-      <PersonForm add={addPerson} handleName={handleNameChange}  handleNumber={handleNumberChange}
-                  name={newName} number={newNumber}/>
+
+      <PersonForm add={addPerson} handleName={handleNameChange} handleNumber={handleNumberChange}
+        name={newName} number={newNumber} />
 
       <h2>Numbers</h2>
-      
-      <Persons persons={persons} filter={filter} />
+
+      <Persons persons={persons} filter={filter} remove={phoneService.remove} setPersons={setPersons} />
 
     </div>
   )
