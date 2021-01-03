@@ -20,9 +20,6 @@ const App = () => {
       .then(data => {
         setPersons(data)
       })
-      .catch(e => {
-        setMessage({ text: e, error: true })
-      })
   }, [])
 
   const handleNameChange = (event) => {
