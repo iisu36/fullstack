@@ -61,7 +61,7 @@ const App = () => {
           }, 1000)
         })
         .catch(e => {
-          setMessage({ text: e, error: true })
+          setMessage({ text: e.response.data.error, error: true })
         })
 
     } else {
