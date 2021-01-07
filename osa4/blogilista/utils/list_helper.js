@@ -63,7 +63,6 @@ const mostLikes = (blogs) => {
     const collection = _.groupBy(blogs, 'author')
     const array = []
 
-    console.log(collection)
 
     _.forEach(collection, (value, key) => {
 
