@@ -1,9 +1,5 @@
-import React from 'react'
 
 const Header = ({course}) => {
-
-  console.log('Header')
-  console.log(course)
 
   return (
     <div>
@@ -13,9 +9,6 @@ const Header = ({course}) => {
 }
 
 const Content = ({parts}) => {
-
-  console.log('Content')
-  console.log(parts)
 
   return (
     <div>
@@ -28,9 +21,6 @@ const Content = ({parts}) => {
 
 const Part = ({part}) => {
 
-  console.log('Part')
-  console.log(part)
-
   return (
     <>
       <p>{part.name} {part.exercises}</p>
@@ -39,9 +29,6 @@ const Part = ({part}) => {
 }
 
 const Total = ({parts}) => {
-
-  console.log('Total')
-  console.log(parts)
 
   const total = parts.reduce((sum, part) => sum + part.exercises, 0)
 
