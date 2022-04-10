@@ -10,7 +10,7 @@ const App = () => {
 
   useEffect(() => {
     axios
-      .get('https://restcountries.eu/rest/v2/all')
+      .get('https://restcountries.com/v3.1/all')
       .then(response => {
         setData(response.data)
       })
@@ -27,7 +27,7 @@ const App = () => {
         find countries <input value={filter} onChange={handleFilterChange} />
       </div>
 
-      <Countries filter={filter} setFilter={setFilter} countries={data.filter(country => country.name.toLowerCase().includes(filter.toLowerCase()))} />
+      <Countries filter={filter} setFilter={setFilter} countries={data.filter(country => country.name.common.toLowerCase().includes(filter.toLowerCase()))} />
 
     </div>
   )

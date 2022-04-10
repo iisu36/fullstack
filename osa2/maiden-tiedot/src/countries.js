@@ -28,8 +28,8 @@ const Countries = ({ filter, countries, setFilter }) => {
                 {countries.map(country => {
 
                     return (
-                        <div key={country.name}>
-                            {country.name} <button onClick={() => setFilter(country.name)}>show</button>
+                        <div key={country.name.common}>
+                            {country.name.common} <button onClick={() => setFilter(country.name.common)}>show</button>
                         </div>
                     )
                 }

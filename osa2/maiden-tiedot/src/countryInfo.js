@@ -6,18 +6,18 @@ const CountryInfo = ({ country }) => {
     return (
         <div>
 
-            <h1>{country.name}</h1>
-            <p>capital {country.capital}</p>
+            <h1>{country.name.common}</h1>
+            <p>capital {country.capital[0]}</p>
             <p>population {country.population}</p>
             <h3>languages</h3>
 
             <ul>
-                {country.languages.map(language => {
-                    return <li key={language.name}>{language.name}</li>
+                {Object.values(country.languages).map(language => {
+                    return <li key={language}>{language}</li>
                 })}
             </ul>
 
-            <img src={country.flag} alt={country.name + ' flag'} height='20%' width='20%' />
+            <img src={country.flags.png} alt={country.name.common + ' flag'} height='20%' width='20%' />
 
             <Weather country={country} />
 

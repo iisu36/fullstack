@@ -11,10 +11,11 @@ const Weather = ({ country }) => {
         const api_key = process.env.REACT_APP_API_KEY
 
         axios
-            .get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${country.capital}`)
+            .get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${country.capital[0]}`)
             .then(response => {
                 setWeather(response.data)
             })
+            .catch(console.log('No weather data available'))
     }, [])
 
     if (weather.current !== undefined) {
@@ -23,7 +24,7 @@ const Weather = ({ country }) => {
                 <h3>Weather in {country.capital}</h3>
                 <p><b>temperature:</b> {weather.current.temperature} Celcius</p>
                 <img src={weather.current.weather_icons[0]} alt={country.capital + ' weather condition'} />
-                <p><b>wind:</b> {weather.current.wind_speed} mph direction {weather.current.wind_dir}</p>
+                <p><b>wind:</b> {(weather.current.wind_speed / 3.6).toFixed(2)} m/s</p>
             </div>
         )
     } else return null
