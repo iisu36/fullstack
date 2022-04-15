@@ -66,7 +66,7 @@ describe('adding blog', () => {
 
         const user = {
             username: 'root',
-            password: 'password',
+            password: 'password'
         }
 
         const result = await api
@@ -95,7 +95,7 @@ describe('adding blog', () => {
 
     test('blog without url is not added', async () => {
         const newBlog = {
-            title: "Valid blog",
+            title: "Without url",
             author: "Jester the Tester",
             likes: 123
         }
@@ -124,7 +124,6 @@ describe('adding blog', () => {
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
-
         const blogsAtEnd = await helper.blogsInDb()
 
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
@@ -140,14 +139,12 @@ describe('adding blog', () => {
             author: "Jester the Tester",
             url: "http://this-is-a-test"
         }
-
         await api
             .post('/api/blogs')
             .set('Authorization', `bearer ${token}`)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
-
         const blogsAtEnd = await helper.blogsInDb()
 
         const addedBlog = blogsAtEnd.find(blog => blog.title === 'Without likes')
@@ -157,7 +154,7 @@ describe('adding blog', () => {
 
     test('a blog is not added when there is no token', async () => {
         const newBlog = {
-            title: "Valid blog",
+            title: "No token",
             author: "Jester the Tester",
             url: "http://this-is-a-test",
             likes: 123
@@ -206,7 +203,7 @@ describe('deleting blog', () => {
 
         const user = {
             username: 'root',
-            password: 'password',
+            password: 'password'
         }
 
         const result = await api
@@ -216,7 +213,7 @@ describe('deleting blog', () => {
         token = result.body.token
 
         const newBlog = {
-            title: "Valid blog",
+            title: "Deleting blog",
             author: "Jester the Tester",
             url: "http://this-is-a-test",
             likes: 123
@@ -260,10 +257,15 @@ describe('when there is initially one user at db', () => {
     beforeEach(async () => {
         await User.deleteMany({})
 
-        const passwordHash = await bcrypt.hash('password', 10)
-        const user = new User({ username: 'root', passwordHash })
+        const passwordHash1 = await bcrypt.hash('password', 10)
+        const user1 = new User({ username: 'root', passwordHash: passwordHash1 })
 
-        await user.save()
+        await user1.save()
+
+        const passwordHash2 = await bcrypt.hash('password66', 10)
+        const user2 = new User({ username: 'root66', passwordHash: passwordHash2 })
+
+        await user2.save()
     })
 
     test('creation fails with proper statuscode and message if username already taken', async () => {
@@ -299,7 +301,7 @@ describe('when there is initially one user at db', () => {
         await api
             .post('/api/users')
             .send(newUser)
-            .expect(200)
+            .expect(201)
             .expect('Content-Type', /application\/json/)
 
         const usersAtEnd = await helper.usersInDb()
