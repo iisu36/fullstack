@@ -7,8 +7,8 @@ const Notification = ({ message }) => {
     }
 
     return (
-        <div className="error">
-            {message}
+        <div className={message.color}>
+            {message.text}
         </div>
     )
 }
