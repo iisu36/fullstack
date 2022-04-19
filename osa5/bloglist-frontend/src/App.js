@@ -8,7 +8,7 @@ import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const [blogs, setBlogsState] = useState([])
   const [message, setMessage] = useState(null)
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
@@ -28,6 +28,11 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  const setBlogs = (blogArray) => {
+    const copy = blogArray.map(blog => blog)
+    setBlogsState(copy.sort((a,b) => b.likes - a.likes))
+  }
 
   const handleLogin = async (userToLogin) => {
     try {
@@ -68,8 +73,43 @@ const App = () => {
         setMessage(null)
       }, 5000)
 
+      console.log(response)
+
       setBlogs(blogs.concat(response))
 
+    } catch (exception) {
+      setMessage({
+        text: exception.toString(),
+        color: 'error'
+      })
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
+  }
+
+  const updateBlog = async (blog) => {
+
+    const blogToUpdate = {
+      user: blog.user,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
+
+    try {
+      const response = await blogService.update(blog.id, blogToUpdate)
+
+      setMessage({
+        text: `liked blog ${response.title} by ${response.author}`,
+        color: 'success'
+      })
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+
+      setBlogs(blogs.map(b => b.id !== response.id ? b : response))
     } catch (exception) {
       setMessage({
         text: exception.toString(),
@@ -103,7 +143,7 @@ const App = () => {
             />
           </Togglable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
           )}
         </div>
       }
