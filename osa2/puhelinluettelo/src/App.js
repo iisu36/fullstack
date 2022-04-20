@@ -4,7 +4,6 @@ import PersonForm from './components/personForm'
 import Persons from './components/persons'
 import Notification from './components/notification'
 import phoneService from './services/phonebook'
-import phonebook from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -93,7 +92,7 @@ const App = () => {
   }
 
   const remove = (id) => {
-    phonebook.remove(id)
+    phoneService.remove(id)
       .then(() => {
         setMessage({ text: "Deleted", error: false })
         setTimeout(() => {
