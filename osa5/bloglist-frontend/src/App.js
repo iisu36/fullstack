@@ -31,7 +31,7 @@ const App = () => {
 
   const setBlogs = (blogArray) => {
     const copy = blogArray.map(blog => blog)
-    setBlogsState(copy.sort((a,b) => b.likes - a.likes))
+    setBlogsState(copy.sort((a, b) => b.likes - a.likes))
   }
 
   const handleLogin = async (userToLogin) => {
@@ -72,8 +72,6 @@ const App = () => {
       setTimeout(() => {
         setMessage(null)
       }, 5000)
-
-      console.log(response)
 
       setBlogs(blogs.concat(response))
 
@@ -121,6 +119,32 @@ const App = () => {
     }
   }
 
+  const removeBLog = async (blogToDelete) => {
+    if (window.confirm(`delete blog ${blogToDelete.title} by ${blogToDelete.author} ?`)) {
+      try {
+        await blogService.remove(blogToDelete.id)
+
+        setMessage({
+          text: `deleted blog ${blogToDelete.title} by ${blogToDelete.author}`,
+          color: 'success'
+        })
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+
+        setBlogs(blogs.filter(b => b.id !== blogToDelete.id))
+      } catch (exception) {
+        setMessage({
+          text: exception.toString(),
+          color: 'error'
+        })
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+      }
+    }
+  }
+
   return (
     <div>
       <h2>blogs</h2>
@@ -143,7 +167,11 @@ const App = () => {
             />
           </Togglable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+            <Blog key={blog.id}
+              blog={blog}
+              updateBlog={updateBlog}
+              removeBLog={removeBLog}
+              user={user} />
           )}
         </div>
       }
