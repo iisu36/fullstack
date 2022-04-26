@@ -19,7 +19,7 @@ const Blog = ({ blog, updateBlog, removeBLog, user }) => {
       {view === false ? '' :
         <>
           <p>{blog.url}</p>
-          <p>likes {blog.likes}<button onClick={() => updateBlog(blog)}>like</button></p>
+          <p>likes {blog.likes}<button onClick={() => updateBlog(blog)} className='likeButton'>like</button></p>
           <p>{blog.user.name}</p>
           {user.username !== blog.user.username ? '' :
             <button onClick={() => removeBLog(blog)}>remove</button>}
