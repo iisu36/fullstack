@@ -14,7 +14,7 @@ const Blog = ({ blog, updateBlog, removeBLog, user }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       {blog.title} {blog.author}<button onClick={() => setView(!view)}>{view === false ? 'view' : 'hide'}</button>
       {view === false ? '' :
         <>
@@ -22,7 +22,7 @@ const Blog = ({ blog, updateBlog, removeBLog, user }) => {
           <p>likes {blog.likes}<button onClick={() => updateBlog(blog)} className='likeButton'>like</button></p>
           <p>{blog.user.name}</p>
           {user.username !== blog.user.username ? '' :
-            <button onClick={() => removeBLog(blog)}>remove</button>}
+            <button id="remove-button" onClick={() => removeBLog(blog)}>remove</button>}
         </>
       }
 
