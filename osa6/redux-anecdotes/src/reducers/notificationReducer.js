@@ -5,7 +5,6 @@ const notificationSlice = createSlice({
     initialState: null,
     reducers: {
         createNotification(state, action) {
-            if (action.payload === null) return state = null
             return state = action.payload
         }
     }
@@ -13,12 +12,13 @@ const notificationSlice = createSlice({
 
 export const { voteNotification, createNotification } = notificationSlice.actions
 
-export const setNotification = (content, seconds = 5) => {
+export const setNotification = (content, seconds = 5, lastTimeOutId) => {
     return dispatch => {
-        dispatch(createNotification(content))
-        setTimeout(() => {
+        clearTimeout(lastTimeOutId)
+        const timeOutId = setTimeout(() => {
             dispatch(createNotification(null))
-        }, seconds*1000);
+        }, seconds*1000)
+        dispatch(createNotification({content, timeOutId}))
     }
 }
 
