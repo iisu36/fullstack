@@ -7,6 +7,7 @@ import Togglable from './components/Togglable'
 import BlogList from './components/BlogList'
 import Users from './components/Users'
 import User from './components/User'
+import BlogDetails from './components/BlogDetails'
 
 import loginService from './services/login'
 
@@ -23,7 +24,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { Routes, Route, useMatch } from 'react-router-dom'
 
-const Lander = ({ addBlog, user }) => {
+const Lander = ({ addBlog, user, blogs }) => {
   const blogFormRef = useRef()
 
   const createBlog = (blog) => {
@@ -36,24 +37,39 @@ const Lander = ({ addBlog, user }) => {
         <NewBlogForm onCreate={createBlog} />
       </Togglable>
 
-      <BlogList user={user} />
+      <BlogList user={user} blogs={blogs} />
     </>
   )
 }
 
 const App = () => {
-  const blogFormRef = useRef()
 
   const user = useSelector((state) => state.user)
   const users = useSelector((state) => state.users)
+  const blogs = useSelector((state) => {
+    const sorted = [...state.blogs].sort((a, b) => b.likes > a.likes ? 1 : -1)
+    return sorted
+  })
 
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(initializeBlogs())
+  }, [dispatch])
+
+  useEffect(() => {
     dispatch(initializeUsers())
+  }, [dispatch])
+
+  useEffect(() => {
     dispatch(setUserFromStorage())
   }, [dispatch])
+
+  const matchUser = useMatch('users/:id')
+  const userMatched = matchUser ? users.find(user => user.id === matchUser.params.id) : null
+
+  const matchBlog = useMatch('blogs/:id')
+  const blogMatched = matchBlog ? blogs.find(blog => blog.id === matchBlog.params.id) : null
 
   const login = async (username, password) => {
     loginService
@@ -91,7 +107,7 @@ const App = () => {
     dispatch(createNotification({ message, type }))
   }
 
-  if (user === null) {
+  if (!user) {
     return (
       <>
         <Notification />
@@ -100,24 +116,20 @@ const App = () => {
     )
   }
 
-  const matchUser = useMatch('users/:id')
-  const userMatched = matchUser ? users.find(user => user.id === matchUser.params.id) : null
-
   return (
     <div>
       <h2>blogs</h2>
 
       <Notification />
 
-      <div>
-        {user.name} logged in
-        <button onClick={logout}>logout</button>
-      </div>
+      <p>{user.name} logged in</p>
+      <button onClick={logout}>logout</button>
 
       <Routes>
-        <Route path="/" element={<Lander user={user} addBlog={addBlog} />} blogFormRef={blogFormRef} />
+        <Route path="/" element={<Lander user={user} addBlog={addBlog} blogs={blogs} />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User user={userMatched} />} />
+        <Route path="/blogs/:id" element={<BlogDetails user={user} blog={blogMatched}/>} />
       </Routes>
     </div>
   )
