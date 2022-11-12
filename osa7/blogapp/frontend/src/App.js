@@ -12,7 +12,7 @@ import BlogDetails from './components/BlogDetails'
 import loginService from './services/login'
 
 import { createNotification } from './reducers/notificationReducer'
-import { initializeBlogs, createBlog } from './reducers/blogReducer'
+import { initializeBlogs, createBlog, addComment } from './reducers/blogReducer'
 import {
   setUserFromStorage,
   loginUser,
@@ -22,7 +22,7 @@ import { initializeUsers } from './reducers/usersReducer'
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Routes, Route, useMatch } from 'react-router-dom'
+import { Routes, Route, useMatch, Link } from 'react-router-dom'
 
 const Lander = ({ addBlog, user, blogs }) => {
   const blogFormRef = useRef()
@@ -103,6 +103,14 @@ const App = () => {
     })
   }
 
+  const commentBlog = async (blog, comment) => {
+    const newBlog = { ...blog, comments: blog.comments.concat(comment), user: user.id }
+    const request = dispatch(addComment(newBlog))
+    request.then(() => {
+      notify(`commented on blog ${newBlog.title}`)
+    })
+  }
+
   const notify = (message, type = 'info') => {
     dispatch(createNotification({ message, type }))
   }
@@ -118,18 +126,20 @@ const App = () => {
 
   return (
     <div>
+      <nav>
+        <p>
+          <Link to='/'>blogs</Link> <Link to='/users'>users</Link> {user.name} logged in <button onClick={logout}>logout</button>
+        </p>
+      </nav>
       <h2>blogs</h2>
 
       <Notification />
-
-      <p>{user.name} logged in</p>
-      <button onClick={logout}>logout</button>
 
       <Routes>
         <Route path="/" element={<Lander user={user} addBlog={addBlog} blogs={blogs} />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User user={userMatched} />} />
-        <Route path="/blogs/:id" element={<BlogDetails user={user} blog={blogMatched}/>} />
+        <Route path="/blogs/:id" element={<BlogDetails user={user} blog={blogMatched} onComment={commentBlog}/>} />
       </Routes>
     </div>
   )

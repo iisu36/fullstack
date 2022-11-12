@@ -1,11 +1,14 @@
 import { useDispatch } from 'react-redux'
+import { useState } from 'react'
 import { addVote, deleteBlog } from '../reducers/blogReducer'
 import { createNotification } from '../reducers/notificationReducer'
 import { useNavigate } from 'react-router-dom'
 
-const BlogDetails = ({ blog, user }) => {
+const BlogDetails = ({ blog, user, onComment }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  const [comment, setComment] = useState('')
 
   if (!user || !blog) {
     return null
@@ -36,19 +39,48 @@ const BlogDetails = ({ blog, user }) => {
     navigate('/')
   }
 
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    onComment(blog, comment)
+    setComment('')
+  }
+
   return (
-    <div>
+    <>
       <div>
-        <h1>{blog.title}</h1>
-        <a href={blog.url}>{blog.url}</a>
+        <div>
+          <h1>{blog.title}</h1>
+          <a href={blog.url}>{blog.url}</a>
+        </div>
+        <div>
+          {blog.likes} likes{' '}
+          <button onClick={() => likeBlog(blog.id)}>like</button>
+        </div>
+        added by {addedBy}
+        {own && <button onClick={() => handleRemove(blog.id)}>remove</button>}
       </div>
       <div>
-        {blog.likes} likes{' '}
-        <button onClick={() => likeBlog(blog.id)}>like</button>
+        <h3>comments</h3>
+        <form onSubmit={handleSubmit}>
+          <input
+            value={comment}
+            onChange={({ target }) => setComment(target.value)}
+            id="comment"
+            placeholder="comment blog"
+          />
+          <button id="create-button" type="submit">
+            add comment
+          </button>
+        </form>
       </div>
-      added by {addedBy}
-      {own && <button onClick={() => handleRemove(blog.id)}>remove</button>}
-    </div>
+      <div>
+        <ul>
+          {blog.comments.map((comment) => (
+            <li key={comment}>{comment}</li>
+          ))}
+        </ul>
+      </div>
+    </>
   )
 }
 
