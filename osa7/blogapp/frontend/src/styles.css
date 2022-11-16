@@ -1,0 +1,132 @@
+body {
+    background-color: rgb(255, 236, 0);
+    font-family: monospace;
+    font-size: large;
+}
+
+.nav {
+    background-color: whitesmoke;
+    border-style: dashed;
+    border-radius: 10px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+}
+
+.navlink {
+    margin: 0 10px;
+}
+
+.nav button {
+    margin: 0 5px;
+}
+
+a {
+    color: blue;
+    font-weight: bolder;
+}
+
+.user {
+    margin-left: auto;
+    margin-right: 5px;
+    color: blue;
+    font-weight: bold;
+}
+
+.header {
+    border-bottom: dotted;
+}
+
+.blog {
+    padding: 10px;
+    margin-top: 8px;
+    border-style: double;
+    border-width: 8px;
+    border-radius: 13px;
+    box-shadow: 0px 0px 3px 1px black;
+    background-color: white;
+}
+
+.blog em {
+    color: black;
+}
+
+.create {
+    background-color: green;
+    margin-top: 10px
+}
+
+.remove-button {
+    background-color: rgb(200, 0, 0);
+}
+
+.user-block {
+    padding: 5px 10px;
+    border-style: solid;
+    border-color: white;
+    border-width: 0px;
+    border-radius: 15px;
+    box-shadow: inset 0px 0px 3px 3px blue;
+    background-color: white;
+    color: blue;
+    text-align: end;
+    font-weight: bolder;
+}
+
+.likes {
+    margin: 20px;
+    font-weight: bolder;
+}
+
+.comment-header {
+    border-top: dotted;
+}
+
+table {
+    display: table;
+    border-collapse: separate;
+    box-sizing: border-box;
+    text-indent: initial;
+    text-align: end;
+    border-spacing: 0 15px;
+    border-color: black;
+}
+
+button {
+    font-family: monospace;
+    font-weight: bold;
+    border-style: dotted;
+    border-radius: 15px;
+    background-color: grey;
+    border-width: 2px;
+    border-color: black;
+    color: white;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+input {
+    margin: 2px 10px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    border-color: black;
+    font-family: monospace;
+    font-weight: bold;
+    color: black;
+}
+
+ul {
+    list-style: none;
+}
+
+li {
+    padding: 10px;
+    margin-left: -30px;
+    margin-top: 8px;
+    border-style: double;
+    border-width: 8px;
+    border-radius: 13px;
+    box-shadow: 0px 0px 3px 1px black;
+    background-color: white;
+    font-weight: bolder;
+}

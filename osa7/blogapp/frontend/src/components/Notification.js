@@ -12,9 +12,11 @@ const Notification = () => {
     background: 'lightgrey',
     fontSize: 20,
     borderStyle: 'solid',
-    borderRadius: 5,
+    borderRadius: 15,
     padding: 10,
     marginBottom: 10,
+    marginTop: 10,
+    textAlign: 'center',
   }
 
   return (

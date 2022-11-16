@@ -11,7 +11,7 @@ const Users = () => {
 
   return (
     <div>
-      <h1>Users</h1>
+      <h2 className='header'>Users</h2>
       <table>
         <thead>
           <tr>
@@ -23,7 +23,7 @@ const Users = () => {
           {users.map((user) => (
             <tr key={user.id + user.name}>
               <td>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
+                <Link to={`/users/${user.id}`} className='user-block'>{user.name}</Link>
               </td>
               <td>{user.blogs.length}</td>
             </tr>

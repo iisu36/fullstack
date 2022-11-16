@@ -49,18 +49,18 @@ const BlogDetails = ({ blog, user, onComment }) => {
     <>
       <div>
         <div>
-          <h1>{blog.title}</h1>
-          <a href={blog.url}>{blog.url}</a>
+          <h2 className='header'>{blog.title}</h2>
+          <a href={blog.url} className='blog-url'>{blog.url}</a>
         </div>
-        <div>
+        <div className='likes'>
           {blog.likes} likes{' '}
-          <button onClick={() => likeBlog(blog.id)}>like</button>
+          <button onClick={() => likeBlog(blog.id)} className='create'>like</button>
         </div>
-        added by {addedBy}
-        {own && <button onClick={() => handleRemove(blog.id)}>remove</button>}
+        <p className='added-by'>added by {addedBy}</p>
+        {own && <button onClick={() => handleRemove(blog.id)} className='remove-button'>remove blog</button>}
       </div>
       <div>
-        <h3>comments</h3>
+        <h2 className='comment-header'>comments</h2>
         <form onSubmit={handleSubmit}>
           <input
             value={comment}
@@ -68,7 +68,7 @@ const BlogDetails = ({ blog, user, onComment }) => {
             id="comment"
             placeholder="comment blog"
           />
-          <button id="create-button" type="submit">
+          <button id="create-button" type="submit" className='create'>
             add comment
           </button>
         </form>

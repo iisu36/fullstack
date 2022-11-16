@@ -22,7 +22,7 @@ import { initializeUsers } from './reducers/usersReducer'
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Routes, Route, useMatch, Link } from 'react-router-dom'
+import { Routes, Route, useMatch, useNavigate, Link } from 'react-router-dom'
 
 const Lander = ({ addBlog, user, blogs }) => {
   const blogFormRef = useRef()
@@ -33,6 +33,7 @@ const Lander = ({ addBlog, user, blogs }) => {
   }
   return (
     <>
+      <h2 className='header'>Blogs</h2>
       <Togglable buttonLabel="create new" ref={blogFormRef}>
         <NewBlogForm onCreate={createBlog} />
       </Togglable>
@@ -43,11 +44,10 @@ const Lander = ({ addBlog, user, blogs }) => {
 }
 
 const App = () => {
-
   const user = useSelector((state) => state.user)
   const users = useSelector((state) => state.users)
   const blogs = useSelector((state) => {
-    const sorted = [...state.blogs].sort((a, b) => b.likes > a.likes ? 1 : -1)
+    const sorted = [...state.blogs].sort((a, b) => (b.likes > a.likes ? 1 : -1))
     return sorted
   })
 
@@ -66,10 +66,16 @@ const App = () => {
   }, [dispatch])
 
   const matchUser = useMatch('users/:id')
-  const userMatched = matchUser ? users.find(user => user.id === matchUser.params.id) : null
+  const userMatched = matchUser
+    ? users.find((user) => user.id === matchUser.params.id)
+    : null
 
   const matchBlog = useMatch('blogs/:id')
-  const blogMatched = matchBlog ? blogs.find(blog => blog.id === matchBlog.params.id) : null
+  const blogMatched = matchBlog
+    ? blogs.find((blog) => blog.id === matchBlog.params.id)
+    : null
+
+  const navigate = useNavigate()
 
   const login = async (username, password) => {
     loginService
@@ -84,11 +90,13 @@ const App = () => {
       .catch(() => {
         notify('wrong username/password', 'alert')
       })
+    navigate('/')
   }
 
   const logout = () => {
     dispatch(logOutUser())
     notify('good bye!')
+    navigate('/')
   }
 
   const addBlog = async (blog) => {
@@ -104,7 +112,11 @@ const App = () => {
   }
 
   const commentBlog = async (blog, comment) => {
-    const newBlog = { ...blog, comments: blog.comments.concat(comment), user: user.id }
+    const newBlog = {
+      ...blog,
+      comments: blog.comments.concat(comment),
+      user: user.id,
+    }
     const request = dispatch(addComment(newBlog))
     request.then(() => {
       notify(`commented on blog ${newBlog.title}`)
@@ -117,29 +129,46 @@ const App = () => {
 
   if (!user) {
     return (
-      <>
+      <div>
         <Notification />
         <LoginForm onLogin={login} />
-      </>
+      </div>
     )
   }
 
   return (
     <div>
-      <nav>
-        <p>
-          <Link to='/'>blogs</Link> <Link to='/users'>users</Link> {user.name} logged in <button onClick={logout}>logout</button>
-        </p>
+      <nav className="nav">
+        <Link to="/" className="navlink">
+          blogs
+        </Link>
+        <Link to="/users" className="navlink">
+          users
+        </Link>
+        <p className="user">{user.name}</p>
+        <p>logged in</p>
+        <button onClick={logout}>log out</button>
       </nav>
-      <h2>blogs</h2>
 
       <Notification />
 
       <Routes>
-        <Route path="/" element={<Lander user={user} addBlog={addBlog} blogs={blogs} />} />
+        <Route
+          path="/"
+          element={<Lander user={user} addBlog={addBlog} blogs={blogs} />}
+        />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User user={userMatched} />} />
-        <Route path="/blogs/:id" element={<BlogDetails user={user} blog={blogMatched} onComment={commentBlog}/>} />
+        <Route
+          path="/blogs/:id"
+          element={
+            <BlogDetails
+              user={user}
+              blog={blogMatched}
+              onComment={commentBlog}
+            />
+          }
+        />
       </Routes>
     </div>
   )
