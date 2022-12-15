@@ -11,7 +11,34 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS}],
+    update(cache, createBook) {
+      const newBook = createBook.data.addBook
+
+      newBook.genres.forEach((genre) => {
+        const data = cache.readQuery({
+          query: ALL_BOOKS,
+          variables: { genre: genre },
+        }) ?? { allBooks: [] }
+        cache.writeQuery({
+          query: ALL_BOOKS,
+          variables: { genre: genre },
+          data: { allBooks: [...data.allBooks, newBook] },
+        })
+      })
+
+      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+        const existingAuthor = allAuthors.find((author) => author.name === newBook.author.name)
+        if(existingAuthor) {
+          return {
+            allAuthors: allAuthors.map((author) => author.name !== existingAuthor.name ? author : {...author, bookCount: author.bookCount + 1}),
+          }
+        } else {
+          return {
+            allAuthors: allAuthors.concat(newBook.author),
+          }
+        }
+      })
+    },
   })
 
   if (!props.show) {
@@ -28,6 +55,7 @@ const NewBook = (props) => {
     setAuthor('')
     setGenres([])
     setGenre('')
+    props.setPage('books')
   }
 
   const addGenre = () => {

@@ -1,25 +1,27 @@
 import { useQuery } from '@apollo/client'
 
-import { ALL_BOOKS } from '../queries'
+import { ALL_BOOKS, ME } from '../queries'
 
 const Recommendations = (props) => {
-  const genreToShow = props.genreToShow
+  const userResult = useQuery(ME)
   const sortedGenreResult = useQuery(ALL_BOOKS, {
-    variables: { genre: genreToShow === undefined ? 'undefined' : genreToShow },
+    variables: { genre: userResult.data.me?.favoriteGenre },
   })
 
   if (!props.show) {
     return null
   }
 
-  if (sortedGenreResult.loading) {
+  if (userResult.loading || sortedGenreResult.loading) {
     return <div>loading...</div>
   }
+
+  const favoriteGenre = userResult.data.me?.favoriteGenre
 
   return (
     <div>
       <h2>recommendations</h2>
-      <p>books in your favorite genre <b>{genreToShow}</b></p>
+      <p>books in your favorite genre <b>{favoriteGenre}</b></p>
       <table>
         <tbody>
           <tr>

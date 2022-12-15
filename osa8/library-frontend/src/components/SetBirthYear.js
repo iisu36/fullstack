@@ -8,7 +8,16 @@ const NewBook = (props) => {
   const [born, setBorn] = useState('')
 
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+    update(cache, editAuthor) {
+      const editedAuthor = editAuthor.data.editAuthor
+      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+        return {
+          allAuthors: allAuthors.map((author) =>
+            author.name !== editedAuthor.name ? author : editedAuthor
+          ),
+        }
+      })
+    },
   })
 
   const result = useQuery(ALL_AUTHORS)
@@ -25,9 +34,12 @@ const NewBook = (props) => {
     event.preventDefault()
 
     editAuthor({ variables: { name, born } })
-
-    setName('')
     setBorn('')
+    props.setPage('authors')
+  }
+
+  if (name === '') {
+    setName(result.data.allAuthors[0].name)
   }
 
   return (
@@ -36,8 +48,10 @@ const NewBook = (props) => {
         <div>
           name
           <select value={name} onChange={({ target }) => setName(target.value)}>
-            {result.data.allAuthors.map(author => (
-              <option key={author.name} value={author.name}>{author.name}</option>
+            {result.data.allAuthors.map((author) => (
+              <option key={author.name} value={author.name}>
+                {author.name}
+              </option>
             ))}
           </select>
         </div>

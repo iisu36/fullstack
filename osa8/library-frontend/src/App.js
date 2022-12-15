@@ -1,29 +1,54 @@
-import { useState } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useState, useEffect } from 'react'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
 import SetBirthYear from './components/SetBirthYear'
 import Recommendations from './components/Recommendations'
-import { ME } from './queries'
+import { BOOK_ADDED, ALL_BOOKS, ME } from './queries'
+
+export const updateCache = (cache, query, added) => {
+  const uniqByName = (a) => {
+    let seen = new Set()
+    return a.filter((item) => {
+      let k = item.title
+      const v = seen.has(k) ? false : seen.add(k)
+      return v
+    })
+  }
+
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqByName(allBooks.concat(added)),
+    }
+  })
+}
 
 const App = () => {
   const [page, setPage] = useState('authors')
-  const [favoriteGenre, setFavoriteGenre] = useState('undefined')
+  const [token, setToken] = useState(localStorage.getItem('library-user-token'))
   const client = useApolloClient()
-  const token = localStorage.getItem('library-user-token')
+  const userResult = useQuery(ME)
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data, client }) => {
+      const addedBook = data.data.bookAdded
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+    },
+  })
 
-  const getUserInfo = async () => {
-    const response = await client.query({
-      query: ME
-    })
-    setFavoriteGenre(response.data.me.favoriteGenre)
+  useEffect(() => {
+    userResult.refetch()
+  }, [token]) //eslint-disable-line
+  
+  if (userResult.loading) {
+    return <div>loading</div>
   }
 
   const logOut = () => {
     localStorage.clear()
     client.resetStore()
+    setToken(null)
     setPage('login')
   }
 
@@ -37,10 +62,13 @@ const App = () => {
           <button onClick={() => setPage('set')}>set birth year</button>
         )}
         {token && (
-          <button onClick={() => {
-            getUserInfo()
-            setPage('recommendations')
-          }}>recommend</button>
+          <button
+            onClick={() => {
+              setPage('recommendations')
+            }}
+          >
+            recommend
+          </button>
         )}
         {!token && <button onClick={() => setPage('login')}>login</button>}
         {token && <button onClick={logOut}>logout</button>}
@@ -50,19 +78,13 @@ const App = () => {
 
       <Books show={page === 'books'} />
 
-      <NewBook show={page === 'add'} />
+      <NewBook show={page === 'add'} setPage={setPage} />
 
-      <SetBirthYear show={page === 'set'} />
+      <SetBirthYear show={page === 'set'} setPage={setPage} />
 
-      <LoginForm
-        show={page === 'login'}
-        setPage={setPage}
-      />
+      <LoginForm show={page === 'login'} setPage={setPage} setToken={setToken} />
 
-      <Recommendations
-        show={page === 'recommendations'}
-        genreToShow={favoriteGenre}
-      />
+      <Recommendations show={page === 'recommendations'} />
     </div>
   )
 }

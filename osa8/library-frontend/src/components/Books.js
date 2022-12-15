@@ -1,13 +1,14 @@
-import { useQuery } from '@apollo/client'
+import { useQuery, useLazyQuery } from '@apollo/client'
 import { useState } from 'react'
 
 import { ALL_BOOKS } from '../queries'
 
 const Books = (props) => {
-  const [genreToShow, setGenreToShow] = useState('')
+  const [genreToShow, setGenreToShow] = useState(null)
+  const [showAll, setShowAll] = useState(true)
 
   const allBooksResult = useQuery(ALL_BOOKS)
-  const sortedGenreResult = useQuery(ALL_BOOKS, {
+  const [loadSortedResult, sortedGenreResult] = useLazyQuery(ALL_BOOKS, {
     variables: { genre: genreToShow },
   })
 
@@ -33,13 +34,14 @@ const Books = (props) => {
 
   const setGenre = (genre) => {
     setGenreToShow(genre)
-    sortedGenreResult.refetch({ genre: genre })
+    setShowAll(false)
+    loadSortedResult()
   }
 
   return (
     <div>
       <h2>books</h2>
-      <p>in {genreToShow === '' ? 'all genres' : `genre ${genreToShow}`}</p>
+      <p>in {showAll ? 'all genres' : `genre ${genreToShow}`}</p>
       <table>
         <tbody>
           <tr>
@@ -47,13 +49,21 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {sortedGenreResult.data.allBooks.map((a) => (
-            <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
-            </tr>
-          ))}
+          {(showAll &&
+            allBooksResult.data?.allBooks.map((a) => (
+              <tr key={a.title}>
+                <td>{a.title}</td>
+                <td>{a.author.name}</td>
+                <td>{a.published}</td>
+              </tr>
+            ))) ||
+            sortedGenreResult.data?.allBooks.map((a) => (
+              <tr key={a.title}>
+                <td>{a.title}</td>
+                <td>{a.author.name}</td>
+                <td>{a.published}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
       <div>
@@ -62,7 +72,7 @@ const Books = (props) => {
             {genre}
           </button>
         ))}
-        <button onClick={() => setGenre('')}>all genres</button>
+        <button onClick={() => setShowAll(true)}>all genres</button>
       </div>
     </div>
   )
