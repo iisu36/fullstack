@@ -34,13 +34,16 @@ const resolvers = {
       } else if (args.genre) {
         books = Book.find({ genres: { $in: [args.genre] } })
       }
-      return books.populate('author', { name: 1, born: 1, bookCount: 1, id: 1 })
+      return books.populate('author', { name: 1, born: 1, id: 1 })
     },
-    allAuthors: async () => await Author.find({}),
+    allAuthors: async () => {
+      const authors = await Author.find({}).populate('books', {
+        title: 1,
+        id: 1,
+      })
+      return authors
+    },
     me: (root, args, context) => context.currentUser,
-  },
-  Author: {
-    bookCount: async (root) => await Book.countDocuments({ author: root._id }),
   },
   Mutation: {
     addBook: async (root, args, context) => {
@@ -51,7 +54,7 @@ const resolvers = {
       let author = await Author.findOne({ name: args.author })
 
       if (!author) {
-        author = new Author({ name: args.author })
+        author = new Author({ name: args.author, books: [] })
         try {
           await author.save()
         } catch (error) {
@@ -76,10 +79,19 @@ const resolvers = {
         })
       }
 
+      author.books = author.books.concat(book._id)
+      try {
+        await author.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+
       const bookToReturn = book.populate('author', {
         name: 1,
         born: 1,
-        bookCount: 1,
+        books: 1,
         id: 1,
       })
 
@@ -106,7 +118,10 @@ const resolvers = {
         })
       }
 
-      return author
+      return author.populate('books', {
+        title: 1,
+        id: 1,
+      })
     },
     createUser: async (root, args) => {
       const user = new User({

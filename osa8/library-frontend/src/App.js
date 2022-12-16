@@ -6,7 +6,7 @@ import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
 import SetBirthYear from './components/SetBirthYear'
 import Recommendations from './components/Recommendations'
-import { BOOK_ADDED, ALL_BOOKS, ME } from './queries'
+import { BOOK_ADDED, ALL_BOOKS, ME, ALL_AUTHORS } from './queries'
 
 export const updateCache = (cache, query, added) => {
   const uniqByName = (a) => {
@@ -33,14 +33,52 @@ const App = () => {
   useSubscription(BOOK_ADDED, {
     onData: ({ data, client }) => {
       const addedBook = data.data.bookAdded
+
+      window.alert(
+        `New book ${addedBook.title} by ${addedBook.author.name} added!`
+      )
+
       updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+
+      addedBook.genres.forEach((genre) => {
+        const data = client.cache.readQuery({
+          query: ALL_BOOKS,
+          variables: { genre: genre },
+        }) ?? { allBooks: [] }
+        client.cache.writeQuery({
+          query: ALL_BOOKS,
+          variables: { genre: genre },
+          data: { allBooks: [...data.allBooks, addedBook] },
+        })
+      })
+
+      client.cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+        const existingAuthor = allAuthors.find(
+          (author) => author.name === addedBook.author.name
+        )
+        if (existingAuthor) {
+          return {
+            allAuthors: allAuthors.map((author) =>
+              author.name !== existingAuthor.name
+                ? author
+                : { ...author, books: author.books.concat(addedBook) }
+            ),
+          }
+        } else {
+          const newAuthor = { ...addedBook.author, books: [addedBook] }
+
+          return {
+            allAuthors: allAuthors.concat(newAuthor),
+          }
+        }
+      })
     },
   })
 
   useEffect(() => {
     userResult.refetch()
   }, [token]) //eslint-disable-line
-  
+
   if (userResult.loading) {
     return <div>loading</div>
   }
@@ -82,7 +120,11 @@ const App = () => {
 
       <SetBirthYear show={page === 'set'} setPage={setPage} />
 
-      <LoginForm show={page === 'login'} setPage={setPage} setToken={setToken} />
+      <LoginForm
+        show={page === 'login'}
+        setPage={setPage}
+        setToken={setToken}
+      />
 
       <Recommendations show={page === 'recommendations'} />
     </div>

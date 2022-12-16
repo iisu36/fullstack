@@ -5,7 +5,7 @@ const typeDefs = gql`
     name: String!
     id: ID!
     born: Int
-    bookCount: Int!
+    books: [Book!]!
   }
 
   type Book {
