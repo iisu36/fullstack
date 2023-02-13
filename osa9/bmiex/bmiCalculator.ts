@@ -1,26 +1,7 @@
-interface BmiArguments {
-  height: number;
-  mass: number;
-}
-
-const parseBmiArguments = (args: string[]): BmiArguments => {
-  if (args.length > 4) throw new Error('Too many arguments');
-  if (args.length < 4) throw new Error('Not enough arguments');
-
-  if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
-    return {
-      height: Number(args[2]),
-      mass: Number(args[3]),
-    };
-  } else {
-    throw new Error('Provided values were not numbers!');
-  }
-};
-
-const calculateBmi = (height: number, mass: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
   let message = '';
 
-  const bmi = mass / ((height / 100) ^ 2);
+  const bmi = weight / ((height / 100) ^ 2);
 
   if (bmi < 16) {
     message = 'Underweight (Severe thinness)';
@@ -41,14 +22,3 @@ const calculateBmi = (height: number, mass: number): string => {
   }
   return message;
 };
-
-try {
-  const { height, mass } = parseBmiArguments(process.argv);
-  console.log(calculateBmi(height, mass));
-} catch (error: unknown) {
-  let errorMessage = 'Something went wrong: ';
-  if (error instanceof Error) {
-    errorMessage += error.message;
-  }
-  console.log(errorMessage);
-}
