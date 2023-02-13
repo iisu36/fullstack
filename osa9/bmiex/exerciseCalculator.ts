@@ -42,7 +42,8 @@ const calculateExercises = (
 
   const success = average >= target;
 
-  let rating, ratingDescription;
+  let rating = 0;
+  let ratingDescription = '';
 
   if (success) {
     rating = 3;
