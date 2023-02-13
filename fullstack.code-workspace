@@ -1,14 +1,15 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../puhelinluettelon-backend"
-		}
-	],
-	"settings": {
-		"prettier.semi": false,
-		"prettier.singleQuote": true
-	}
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "../puhelinluettelon-backend"
+    }
+  ],
+  "settings": {
+    "prettier.semi": false,
+    "prettier.singleQuote": true,
+    "editor.formatOnSave": true
+  }
 }
