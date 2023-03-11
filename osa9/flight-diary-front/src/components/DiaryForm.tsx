@@ -1,4 +1,4 @@
-import { ChangeEvent, SyntheticEvent, useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import { Weather, Visibility, DiaryFormValues } from '../types';
 
 interface Props {
@@ -10,32 +10,6 @@ const DiaryForm = ({ onSubmit }: Props) => {
   const [visibility, setVisibility] = useState<Visibility>(Visibility.Good);
   const [weather, setWeather] = useState<Weather>(Weather.Cloudy);
   const [comment, setComment] = useState('');
-
-  const onVisibilityChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    event.preventDefault();
-    if (typeof event.target.value === 'string') {
-      const value = event.target.value;
-      const visibility = Object.values(Visibility).find(
-        (v) => v.toString() === value
-      );
-      if (visibility) {
-        setVisibility(visibility);
-      }
-    }
-  };
-
-  const onWeatherChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    event.preventDefault();
-    if (typeof event.target.value === 'string') {
-      const value = event.target.value;
-      const weather = Object.values(Weather).find(
-        (w) => w.toString() === value
-      );
-      if (weather) {
-        setWeather(weather);
-      }
-    }
-  };
 
   interface VisibilityOption {
     value: Visibility;
@@ -85,26 +59,32 @@ const DiaryForm = ({ onSubmit }: Props) => {
         ></input>
         <br />
         <label htmlFor="visibility">visibility</label>
-        <select
-          name="visibility"
-          value={visibility}
-          onChange={onVisibilityChange}
-        >
-          {visibilityOptions.map((option) => (
-            <option key={option.label} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        {visibilityOptions.map((option) => (
+          <span key={option.label}>
+            <input
+              type="radio"
+              name="visibility"
+              value={option.value}
+              checked={option.value === visibility}
+              onChange={() => setVisibility(option.value)}
+            />
+            {option.label}
+          </span>
+        ))}
         <br />
         <label htmlFor="weather">weather</label>
-        <select name="weather" value={weather} onChange={onWeatherChange}>
-          {weatherOptions.map((option) => (
-            <option key={option.label} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        {weatherOptions.map((option) => (
+          <span key={option.label}>
+            <input
+              type="radio"
+              name="weather"
+              value={option.value}
+              checked={option.value === weather}
+              onChange={() => setWeather(option.value)}
+            />
+            {option.label}
+          </span>
+        ))}
         <br />
         <label htmlFor="comment">comment</label>
         <input

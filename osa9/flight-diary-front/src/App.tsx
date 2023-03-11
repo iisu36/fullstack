@@ -24,6 +24,9 @@ const App = () => {
       );
       const diary = response.data;
       setDiaries(diaries.concat(diary));
+      if (error !== '') {
+        setError('');
+      }
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         if (e?.response?.data && typeof e?.response?.data === 'string') {
@@ -45,7 +48,7 @@ const App = () => {
 
   return (
     <div>
-      {error !== '' && error}
+      {error !== '' && <p style={{ color: 'red' }}>{error}</p>}
       <DiaryForm onSubmit={submitNewDiary} />
       <DiaryEntries diaries={diaries} />
     </div>
