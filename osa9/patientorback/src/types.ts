@@ -4,6 +4,9 @@ export interface Diagnose {
   latin?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface Entry {}
+
 export interface Patient {
   id: string;
   name: string;
@@ -11,11 +14,12 @@ export interface Patient {
   ssn: string;
   gender: string;
   occupation: string;
+  entries: Entry[];
 }
 
-export type NonSensitivePatientEntry = Omit<Patient, 'ssn'>;
+export type NonSensitivePatientEntry = Omit<Patient, 'ssn' | 'entries'>;
 
-export type NewPatientEntry = Omit<Patient, 'id'>;
+export type NewPatientEntry = Omit<Patient, 'id' | 'entries'>;
 
 export enum Gender {
   Male = 'male',

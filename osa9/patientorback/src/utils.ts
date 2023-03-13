@@ -61,7 +61,7 @@ const parseSsn = (ssn: unknown): string => {
 
 const parseOccupation = (occupation: unknown): string => {
   if (!isString(occupation)) {
-    throw new Error('Incorrect or missing ssn: ' + occupation);
+    throw new Error('Incorrect or missing occupation: ' + occupation);
   }
 
   return occupation;
@@ -69,7 +69,7 @@ const parseOccupation = (occupation: unknown): string => {
 
 const parseGender = (gender: unknown): string => {
   if (!isString(gender) || !isGender(gender)) {
-    throw new Error('Incorrect or missing ssn: ' + gender);
+    throw new Error('Incorrect or missing gender: ' + gender);
   }
 
   return gender;

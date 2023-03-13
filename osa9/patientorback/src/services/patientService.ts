@@ -7,6 +7,7 @@ import toNewPatientEntry from '../utils';
 const patients: Patient[] = patientsData.map((obj) => {
   const object = toNewPatientEntry(obj) as Patient;
   object.id = obj.id;
+  object.entries = obj.entries;
   return object;
 });
 
@@ -30,6 +31,7 @@ const addPatient = (entry: NewPatientEntry): Patient => {
   const newPatientEntry = {
     ...entry,
     id: id,
+    entries: [],
   };
 
   patients.push(newPatientEntry);
@@ -37,8 +39,18 @@ const addPatient = (entry: NewPatientEntry): Patient => {
   return newPatientEntry;
 };
 
+const findById = (id: string): Patient | undefined => {
+  const entry = patients.find((p) => p.id === id);
+
+  if (entry === undefined) {
+    throw new Error('Incorrect id');
+  }
+  return entry;
+};
+
 export default {
   getEntries,
   getNonSensitivePatientEntries,
   addPatient,
+  findById,
 };
