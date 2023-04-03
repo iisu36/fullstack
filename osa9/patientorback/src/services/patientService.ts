@@ -1,7 +1,13 @@
 import { v1 as uuid } from 'uuid';
 import patientsData from '../../data/patientsData';
 
-import { Patient, NonSensitivePatientEntry, NewPatientEntry } from '../types';
+import {
+  Patient,
+  NonSensitivePatientEntry,
+  NewPatientEntry,
+  EntryWithoutId,
+  Entry,
+} from '../types';
 import { toPatientEntry } from '../utils';
 
 const patients: Patient[] = patientsData.map((obj) => {
@@ -50,9 +56,25 @@ const findById = (id: string): Patient | undefined => {
   return entry;
 };
 
+const addEntry = (id: string, entry: EntryWithoutId): Entry => {
+  const patientIndex = patients.findIndex((patient) => patient.id === id);
+  const patient = patients[patientIndex];
+
+  const entryId = uuid();
+  const newEntry = { ...entry, id: entryId };
+
+  patients[patientIndex] = {
+    ...patient,
+    entries: patient.entries.concat(newEntry),
+  };
+
+  return newEntry;
+};
+
 export default {
   getEntries,
   getNonSensitivePatientEntries,
   addPatient,
   findById,
+  addEntry,
 };

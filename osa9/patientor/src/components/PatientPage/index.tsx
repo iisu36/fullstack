@@ -97,7 +97,7 @@ const PatientPage = () => {
   const HospitalEntry = ({ entry }: { entry: Entry }) => {
     if (entry.type === 'Hospital') {
       return (
-        <Box key={entry.date} borderRadius={'16px'} border={1} p={'5px'}>
+        <Box key={entry.date} borderRadius={'16px'} border={1} p={'5px'} my={'5px'}>
           <Typography align="left" variant="body2">
             {entry.date} <HealingIcon />
           </Typography>
@@ -129,7 +129,7 @@ const PatientPage = () => {
   const HealthEntry = ({ entry }: { entry: Entry }) => {
     if (entry.type === 'HealthCheck') {
       return (
-        <Box key={entry.date} borderRadius={'16px'} border={1} p={'5px'}>
+        <Box key={entry.date} borderRadius={'16px'} border={1} p={'5px'} my={'5px'}>
           <Typography align="left" variant="body2">
             {entry.date} <MedicalServicesIcon />
           </Typography>
@@ -157,7 +157,7 @@ const PatientPage = () => {
   const OccupationalEntry = ({ entry }: { entry: Entry }) => {
     if (entry.type === 'OccupationalHealthcare') {
       return (
-        <Box key={entry.date} borderRadius={'16px'} border={1} p={'5px'}>
+        <Box key={entry.date} borderRadius={'16px'} border={1} p={'5px'} my={'5px'}>
           <Typography align="left" variant="body2">
             {entry.date} <WorkIcon /> <i>{entry.employerName}</i>
           </Typography>
