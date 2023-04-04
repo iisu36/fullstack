@@ -216,7 +216,9 @@ const parseType = (type: unknown): Entry['type'] => {
   return type;
 };
 
-const parseHealthCheckRating = (healthCheckRating: unknown): number => {
+const parseHealthCheckRating = (
+  healthCheckRating: unknown
+): HealthCheckRating => {
   if (!isNumber(healthCheckRating) || !isHealthCheckRating(healthCheckRating)) {
     throw new Error(
       'Incorrect or missing healthcheck rating: ' + healthCheckRating
